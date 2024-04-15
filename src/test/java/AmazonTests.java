@@ -31,6 +31,7 @@ public class AmazonTests {
     private By cartButton = By.xpath("//a[@id='nav-cart']");
     private By amountInCart = By.id("nav-cart-count");
     private By cartItemPrice = By.xpath("//span[@class='a-size-medium a-color-base sc-price sc-white-space-nowrap sc-product-price a-text-bold']");
+    private By deleteItem = By.xpath("//span[@data-action='delete']");
     private Actions actions = new Actions();
     private WebDriverWait wait;
 //    Map<WebElement, WebElement> itemDictionary = new HashMap<>();
@@ -71,6 +72,8 @@ public class AmazonTests {
         double priceFromCart= getPriceFromText(driver.findElement(cartItemPrice));
 
         Assert.assertEquals(priceFromCart, priceFromListItem);
+
+        actions.Click(driver.findElement(deleteItem));
     }
 
     private double getPriceFromText(WebElement priceElement) {
