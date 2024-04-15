@@ -1,4 +1,5 @@
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 
 public class AmazonTests {
     private WebDriver driver;
+    private By areNotARobotForm = By.xpath("//div[@class='a-box a-color-offset-background']");
     private By tryDifferentImage = By.xpath("//a[@onclick='window.location.reload()']");
     private By searchInput = By.id("twotabsearchtextbox");
     private By searchIcon = By.id("nav-search-submit-button");
@@ -31,7 +33,7 @@ public class AmazonTests {
     private By cartButton = By.xpath("//a[@id='nav-cart']");
     private By amountInCart = By.id("nav-cart-count");
     private By cartItemPrice = By.xpath("//span[@class='a-size-medium a-color-base sc-price sc-white-space-nowrap sc-product-price a-text-bold']");
-    private By deleteItem = By.xpath("//span[@data-action='delete']");
+    private By deleteItem = By.xpath("//input[@data-action='delete']");
     private Actions actions = new Actions();
     private WebDriverWait wait;
 //    Map<WebElement, WebElement> itemDictionary = new HashMap<>();
@@ -47,9 +49,39 @@ public class AmazonTests {
     }
 
     @Test
-    public void VerifyItemPrice(){
-        actions.Click(driver.findElement(tryDifferentImage));
+    public void FisrtTestCase(){
+        SkipYouAreNotARobot();
         actions.SendText(driver.findElement(searchInput), "Samsung Galaxy Note 20");
+        actions.Click(driver.findElement(searchIcon));
+
+        List<WebElement> prices = driver.findElements(itemPrices);
+        List<WebElement> links = driver.findElements(itemLinks);
+
+        double priceFromListItem = getPriceFromText(prices.getFirst());
+        WebElement x = links.getFirst();
+
+        Assert.assertTrue(links.getFirst().isDisplayed());
+
+        actions.Click(links.getFirst());
+        double priceFromItem = getPriceFromText(driver.findElement(selectedItemPrice));
+
+        Assert.assertEquals(priceFromItem, priceFromListItem);
+
+        actions.Click(driver.findElement(addToCartButton));
+        actions.Click(driver.findElement(skipGuaranty));
+        wait.until(ExpectedConditions.textToBe(amountInCart, "1"));
+        actions.Click(driver.findElement(cartButton));
+        double priceFromCart= getPriceFromText(driver.findElement(cartItemPrice));
+
+        Assert.assertEquals(priceFromCart, priceFromListItem);
+
+        actions.Click(driver.findElement(deleteItem));
+    }
+
+    @Test
+    public void SecondTestCase(){
+        SkipYouAreNotARobot();
+        actions.SendText(driver.findElement(searchInput), "Samsung Galaxy S20 FE 5G");
         actions.Click(driver.findElement(searchIcon));
 
         List<WebElement> prices = driver.findElements(itemPrices);
@@ -86,6 +118,15 @@ public class AmazonTests {
             return Double.parseDouble(numericValue);
         } else {
             return -1;
+        }
+    }
+
+    private void SkipYouAreNotARobot(){
+        try {
+            wait.until(ExpectedConditions.visibilityOf(driver.findElement(areNotARobotForm)));
+            actions.Click(driver.findElement(tryDifferentImage));
+        } catch (NoSuchElementException ex) {
+
         }
     }
 
