@@ -19,8 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AmazonTests {
-    private WebDriver driver;
+public class AmazonTests extends BaseTest {
     private By areNotARobotForm = By.xpath("//div[@class='a-box a-color-offset-background']");
     private By tryDifferentImage = By.xpath("//a[@onclick='window.location.reload()']");
     private By searchInput = By.id("twotabsearchtextbox");
@@ -35,18 +34,7 @@ public class AmazonTests {
     private By cartItemPrice = By.xpath("//span[@class='a-size-medium a-color-base sc-price sc-white-space-nowrap sc-product-price a-text-bold']");
     private By deleteItem = By.xpath("//input[@data-action='delete']");
     private Actions actions = new Actions();
-    private WebDriverWait wait;
-//    Map<WebElement, WebElement> itemDictionary = new HashMap<>();
 
-    @BeforeTest
-    public void SetUp(){
-        System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver.exe");
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://www.amazon.com.mx/");
-        driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-    }
 
     @Test
     public void FisrtTestCase(){
@@ -56,9 +44,7 @@ public class AmazonTests {
 
         List<WebElement> prices = driver.findElements(itemPrices);
         List<WebElement> links = driver.findElements(itemLinks);
-
         double priceFromListItem = getPriceFromText(prices.getFirst());
-        WebElement x = links.getFirst();
 
         Assert.assertTrue(links.getFirst().isDisplayed());
 
@@ -86,9 +72,7 @@ public class AmazonTests {
 
         List<WebElement> prices = driver.findElements(itemPrices);
         List<WebElement> links = driver.findElements(itemLinks);
-
         double priceFromListItem = getPriceFromText(prices.getFirst());
-        WebElement x = links.getFirst();
 
         Assert.assertTrue(links.getFirst().isDisplayed());
 
@@ -128,10 +112,5 @@ public class AmazonTests {
         } catch (NoSuchElementException ex) {
 
         }
-    }
-
-    @AfterTest
-    public void TearDown(){
-        driver.close();
     }
 }
