@@ -95,10 +95,10 @@ public class AmazonTests extends BaseTest {
     private double getPriceFromText(WebElement priceElement) {
         wait.until(ExpectedConditions.visibilityOf(priceElement));
         String price = priceElement.getText().replace("\n", ".");
-        Pattern pattern = Pattern.compile("(\\d+\\.\\d+)");
+        Pattern pattern = Pattern.compile("\\d+(,\\d{3})*(\\.\\d+)?");
         Matcher matcher = pattern.matcher(price);
         if (matcher.find()) {
-            String numericValue = matcher.group();
+            String numericValue = matcher.group().replaceAll(",", "");
             return Double.parseDouble(numericValue);
         } else {
             return -1;
